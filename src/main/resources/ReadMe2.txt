@@ -1,0 +1,21 @@
+sudo ifconfig wlp3s0:1 192.168.0.131 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:2 192.168.0.132 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:3 192.168.0.133 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:4 192.168.0.134 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:5 192.168.0.135 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:6 192.168.0.136 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:7 192.168.0.137 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:8 192.168.0.138 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:9 192.168.0.139 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:10 192.168.0.140 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:11 192.168.0.141 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:12 192.168.0.142 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:13 192.168.0.143 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:14 192.168.0.144 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:15 192.168.0.145 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:16 192.168.0.146 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:17 192.168.0.147 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:18 192.168.0.148 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:19 192.168.0.149 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:20 192.168.0.150 netmask 255.255.255.0 up &&
+sudo ifconfig wlp3s0:21 192.168.0.151 netmask 255.255.255.0 up
