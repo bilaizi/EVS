@@ -66,9 +66,9 @@ public class ClientService extends Thread {
             String voteJsonString = toJSONString(vote);
             System.out.println(voteJsonString);
             try {
-                String secretKey1 = AES.generateKey();
-                String ciperVoteJsonString = AES.encrypt(voteJsonString, secretKey1);
-                String ciperKey1 = RSA.encrypt(secretKey1, serverHost.getPublicKey());
+                String k = AES.generateKey();
+                String ciperVoteJsonString = AES.encrypt(voteJsonString, k);
+                String ciperKey1 = RSA.encrypt(k, serverHost.getPublicKey());
                 Data1 ds1 = new Data1();
                 Sender sender = new Sender();
                 sender.setHost(currentHost);
@@ -78,9 +78,9 @@ public class ClientService extends Thread {
                 ds1.setCiperVote(ciperVoteJsonString);
                 ds1.setCiperKey(ciperKey1);
                 String ds1JsonString = toJSONString(ds1);
-                String secretKey2 = AES.generateKey();
-                String ciperJsonString = AES.encrypt(ds1JsonString, secretKey2);
-                String ciperKey2 = RSA.encrypt(secretKey2, publicKey);
+                String k1 = AES.generateKey();
+                String ciperJsonString = AES.encrypt(ds1JsonString, k1);
+                String ciperKey2 = RSA.encrypt(k1, publicKey);
                 Data ds = new Data();
                 ds.setCiperData(ciperJsonString);
                 ds.setCiperKey(ciperKey2);
@@ -99,7 +99,7 @@ public class ClientService extends Thread {
                 dis.close();
                 dos.close();
                 socket.close();
-                String response = AES.decrypt(ciperResponse, secretKey1);
+                String response = AES.decrypt(ciperResponse, k);
                 long endTime = System.currentTimeMillis();
                 Double elapsed = (endTime - startTime) / 1000d;
                 System.out.println(response + " " + Double.toString(elapsed) + "senconds");

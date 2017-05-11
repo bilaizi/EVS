@@ -124,8 +124,8 @@ public class ServerService extends Thread {
                         String ciperJsonString = ds.getCiperData();
                         String ciperKey1 = ds.getCiperKey();
                         Boolean flag = ds.getFlag();
-                        String secretKey1 = RSA.decrypt(ciperKey1, privateKey);
-                        String jsonString = AES.decrypt(ciperJsonString, secretKey1);
+                        String k1 = RSA.decrypt(ciperKey1, privateKey);
+                        String jsonString = AES.decrypt(ciperJsonString, k1);
                         Sender sender;
                         String serialNumber;
                         Host nextHop;
@@ -154,8 +154,8 @@ public class ServerService extends Thread {
                             sender1.setHost(currentHost);
                             ds1.setSender(sender1);
                             jsonString = toJSONString(ds1);
-                            String secretKey2 = AES.generateKey();
-                            ciperJsonString = AES.encrypt(jsonString, secretKey2);
+                            k1 = AES.generateKey();
+                            ciperJsonString = AES.encrypt(jsonString, k1);
                             ds.setCiperData(ciperJsonString);
                             if (Math.random() > 0.5) {
                                 nextHop = serverHost;
@@ -169,7 +169,7 @@ public class ServerService extends Thread {
                             nextHopHost = nextHop.getHost();
                             nextHopPort = nextHop.getPort();
                             nextHopPublicKey = nextHop.getPublicKey();
-                            String ciperKey2 = RSA.encrypt(secretKey2, nextHopPublicKey);
+                            String ciperKey2 = RSA.encrypt(k1, nextHopPublicKey);
                             ds.setCiperKey(ciperKey2);
                             nextDsJsonString = toJSONString(ds);
                             nextHopSoket = new Socket(nextHopHost, nextHopPort);
@@ -197,9 +197,9 @@ public class ServerService extends Thread {
                                 nextHopHost = nextHop.getHost();
                                 nextHopPort = nextHop.getPort();
                                 nextHopPublicKey = nextHop.getPublicKey();
-                                String secretKey2 = AES.generateKey();
-                                ciperJsonString = AES.encrypt(jsonString, secretKey2);
-                                String ciperKey2 = RSA.encrypt(secretKey2, nextHopPublicKey);
+                                k1 = AES.generateKey();
+                                ciperJsonString = AES.encrypt(jsonString, k1);
+                                String ciperKey2 = RSA.encrypt(k1, nextHopPublicKey);
                                 ds.setCiperData(ciperJsonString);
                                 ds.setCiperKey(ciperKey2);
                                 nextDsJsonString = toJSONString(ds);

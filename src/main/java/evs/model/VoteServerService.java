@@ -63,15 +63,15 @@ public class VoteServerService extends Thread {
                 Data ds = parseObject(dsJsonString, Data.class);
                 String ciperJsonString = ds.getCiperData();
                 String ciperKey1 = ds.getCiperKey();
-                String secretKey1 = RSA.decrypt(ciperKey1, privateKey);
-                String jsonString = AES.decrypt(ciperJsonString, secretKey1);
+                String k1 = RSA.decrypt(ciperKey1, privateKey);
+                String jsonString = AES.decrypt(ciperJsonString, k1);
                 Data1 ds1 = parseObject(jsonString, Data1.class);
                 Sender sender = ds1.getSender();
                 String serialNumber = ds1.getSerialNumber();
                 String ciperVote = ds1.getCiperVote();
                 String ciperKey2 = ds1.getCiperKey();
-                String secretKey2 = RSA.decrypt(ciperKey2, privateKey);
-                String voteJsonString = AES.decrypt(ciperVote, secretKey2);
+                String k = RSA.decrypt(ciperKey2, privateKey);
+                String voteJsonString = AES.decrypt(ciperVote, k);
                 System.out.println("voteJsonString :" + voteJsonString);
 
                 Host host = hostTable
@@ -83,14 +83,14 @@ public class VoteServerService extends Thread {
                         .orElse(null);
                 PublicKey lastHopPublicKey = host.getPublicKey();
                 String response = "You's vote have received:" + voteJsonString;
-                String ciperResponse = AES.encrypt(response, secretKey2);
+                String ciperResponse = AES.encrypt(response, k);
                 Data2 ds2 = new Data2();
                 ds2.setSerialNumber(serialNumber);
                 ds2.setCiperResponse(ciperResponse);
                 jsonString = toJSONString(ds2);
-                secretKey2 = AES.generateKey();
-                ciperJsonString = AES.encrypt(jsonString, secretKey2);
-                ciperKey2 = RSA.encrypt(secretKey2, lastHopPublicKey);
+                k1 = AES.generateKey();
+                ciperJsonString = AES.encrypt(jsonString, k1);
+                ciperKey2 = RSA.encrypt(k1, lastHopPublicKey);
                 ds.setCiperData(ciperJsonString);
                 ds.setCiperKey(ciperKey2);
                 ds.setFlag(false);
