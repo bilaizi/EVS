@@ -183,7 +183,6 @@ public class ServerService extends Thread {
                                         )
                                         .findFirst()
                                         .orElse(null);
-                                System.out.println(sender.getHost());
                                 host = hostInfo.getHost();
                                 port = hostInfo.getPort();
                                 publicKey = hostInfo.getPublicKey();
