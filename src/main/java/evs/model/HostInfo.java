@@ -5,12 +5,12 @@ import java.security.PublicKey;
 /**
  * Created by bilaizi on 17-3-15.
  */
-public class Host {
+public class HostInfo {
     private String host;
     private int port;
     private PublicKey publicKey;
 
-    public Host(String host, int port, PublicKey publicKey) {
+    public HostInfo(String host, int port, PublicKey publicKey) {
         this.host = host;
         this.port = port;
         this.publicKey = publicKey;

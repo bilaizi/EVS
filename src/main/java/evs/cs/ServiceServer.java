@@ -22,12 +22,12 @@ import static com.alibaba.fastjson.JSON.toJSONString;
  * Created by bilaizi on 17-3-20.
  */
 public class ServiceServer {
-    private static List<Host> hostTables;
+    private static List<HostInfo> hostInfoTables;
     private static PrivateKey privateKey;
 
     static {
         try {
-            hostTables = new HostTables().getHostTables();
+            hostInfoTables = new HostTables().getHostInfoTables();
             privateKey = RSA.getPrivateKey("privatekey11.dat");
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,14 +90,14 @@ public class ServiceServer {
                 String voteJsonString = AES.decrypt(ciperVote, secretKey2);
                 System.out.println("voteJsonString :" + voteJsonString);
 
-                Host host = hostTables
+                HostInfo hostInfo = hostInfoTables
                         .stream()
                         .filter(
                                 s -> Objects.equals(s.getHost(), sender.getHost())
                         )
                         .findFirst()
                         .orElse(null);
-                PublicKey lastHopPublicKey = host.getPublicKey();
+                PublicKey lastHopPublicKey = hostInfo.getPublicKey();
                 System.out.println("lastHopPublicKey :" + lastHopPublicKey);
                 String response = "You's vote have received:" + voteJsonString;
                 String ciperResponse = AES.encrypt(response, secretKey2);
@@ -116,7 +116,7 @@ public class ServiceServer {
                 ds.setFlag(false);
                 dsJsonString = toJSONString(ds);
                 System.out.println(dsJsonString);
-                socket = new Socket(host.getHost(), host.getPort());
+                socket = new Socket(hostInfo.getHost(), hostInfo.getPort());
                 DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
                 dos.writeUTF(dsJsonString);
             } catch (Exception e) {

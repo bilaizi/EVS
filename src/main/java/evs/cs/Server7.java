@@ -23,14 +23,14 @@ import static com.alibaba.fastjson.JSON.toJSONString;
  * Created by bilaizi on 17-3-8.
  */
 public class Server7 {
-    public static Host serverHost;
+    public static HostInfo serverHostInfo;
     private static PrivateKey privateKey;
     private final Map<String, Stack<Sender>> routeMap = new ConcurrentHashMap<>();
     private final Map<String, String> responseMap = new ConcurrentHashMap<>();
 
     static {
         try {
-            serverHost = new Host("192.168.0.141", 8080, RSA.getPublicKey("publickey11.dat"));
+            serverHostInfo = new HostInfo("192.168.0.141", 8080, RSA.getPublicKey("publickey11.dat"));
             privateKey = RSA.getPrivateKey("privatekey7.dat");
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,10 +93,10 @@ public class Server7 {
                     System.out.println(secretKey1);
                     String jsonString = AES.decrypt(ciperJsonString, secretKey1);
                     System.out.println("jsonString :" + jsonString);
-                    List<Host> hostTables = new HostTables().getHostTables();
+                    List<HostInfo> hostInfoTables = new HostTables().getHostInfoTables();
                     Sender sender;
                     String serialNumber;
-                    Host nextHop;
+                    HostInfo nextHop;
                     String nextHopHost;
                     int nextHopPort;
                     PublicKey nextHopPublicKey;
@@ -132,13 +132,13 @@ public class Server7 {
                         ciperJsonString = AES.encrypt(jsonString, secretKey2);
                         ds.setCiperData(ciperJsonString);
                         if (Math.random() > 0.5) {
-                            nextHop = serverHost;
+                            nextHop = serverHostInfo;
                         } else {
-                            hostTables.removeIf(s -> Objects.equals(s.getHost(), lastHopHost));
-                            hostTables.removeIf(s -> Objects.equals(s.getHost(), sender7.getHost()));
+                            hostInfoTables.removeIf(s -> Objects.equals(s.getHost(), lastHopHost));
+                            hostInfoTables.removeIf(s -> Objects.equals(s.getHost(), sender7.getHost()));
                             Random random = new Random();
-                            int index = random.nextInt(hostTables.size());
-                            nextHop = hostTables.get(index);
+                            int index = random.nextInt(hostInfoTables.size());
+                            nextHop = hostInfoTables.get(index);
                         }
                         nextHopHost = nextHop.getHost();
                         nextHopPort = nextHop.getPort();
@@ -166,7 +166,7 @@ public class Server7 {
                             } else {
                                 routeMap.remove(serialNumber);
                             }
-                            nextHop = hostTables.stream()
+                            nextHop = hostInfoTables.stream()
                                     .filter(s -> Objects.equals(s.getHost(), sender.getHost()))
                                     .findFirst()
                                     .get();

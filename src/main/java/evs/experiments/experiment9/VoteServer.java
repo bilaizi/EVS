@@ -1,7 +1,7 @@
 package evs.experiments.experiment9;
 
-import evs.model.Host;
-import evs.model.HostTable;
+import evs.model.HostInfo;
+import evs.model.HostInfoTable;
 import evs.model.VoteServerService;
 import evs.util.RSA;
 
@@ -16,11 +16,11 @@ public class VoteServer {
     public static void main(String[] args) throws Exception {
         PrivateKey privateKey = RSA.getPrivateKey("privatekey91.dat");
         int numberClients = 90;
-        List<Host> hostList = new HostTable().getHostTable();
-        List<Host> hostTable = new ArrayList<>(numberClients);
+        List<HostInfo> hostInfoList = new HostInfoTable().getHostInfoTable();
+        List<HostInfo> hostInfoTable = new ArrayList<>(numberClients);
         for (int i = 0; i < numberClients; i++)
-            hostTable.add(i, hostList.get(i));        String voteServerHost = "192.168.0.221";
-        VoteServerService voteServerService = new VoteServerService(privateKey, hostTable, 8080, 100, voteServerHost);
+            hostInfoTable.add(i, hostInfoList.get(i));        String voteServerHost = "192.168.0.221";
+        VoteServerService voteServerService = new VoteServerService(privateKey, hostInfoTable, 8080, 100, voteServerHost);
         voteServerService.start();
         try {
             voteServerService.join();

@@ -20,14 +20,14 @@ import static com.alibaba.fastjson.JSON.toJSONString;
  * Created by bilaizi on 17-5-10.
  */
 public class ClientService extends Thread {
-    private final Host serverHost;
-    private List<Host> hostTable;
+    private final HostInfo voteServerHostInfo;
+    private List<HostInfo> hostInfoTable;
     private final int poolSize;
     private final ExecutorService pool;
 
-    public ClientService(Host serverHost, List<Host> hostTable, int poolSize) {
-        this.serverHost = serverHost;
-        this.hostTable = hostTable;
+    public ClientService(HostInfo voteServerHostInfo, List<HostInfo> hostInfoTable, int poolSize) {
+        this.voteServerHostInfo = voteServerHostInfo;
+        this.hostInfoTable = hostInfoTable;
         this.poolSize = poolSize;
         this.pool = Executors.newFixedThreadPool(poolSize);
     }
@@ -35,19 +35,19 @@ public class ClientService extends Thread {
     @Override
     public void run() {
         for (int i = 1; i <= poolSize; i++) {
-            pool.execute(new WorkerThread(i, serverHost, hostTable));
+            pool.execute(new WorkerThread(i, voteServerHostInfo, hostInfoTable));
         }
     }
 
     public class WorkerThread implements Runnable {
         private int workerId;
-        private Host serverHost;
-        private List<Host> hostTable = new ArrayList<>();
+        private HostInfo voteServerHostInfo;
+        private List<HostInfo> hostInfoTable = new ArrayList<>();
 
-        public WorkerThread(int workerId, Host serverHost, List<Host> hostTable) {
+        public WorkerThread(int workerId, HostInfo voteServerHostInfo, List<HostInfo> hostInfoTable) {
             this.workerId = workerId;
-            this.serverHost = serverHost;
-            this.hostTable.addAll(hostTable);
+            this.voteServerHostInfo = voteServerHostInfo;
+            this.hostInfoTable.addAll(hostInfoTable);
         }
 
         @Override
@@ -55,10 +55,10 @@ public class ClientService extends Thread {
             long startTime = System.currentTimeMillis();
             String currentHost = "192.168.0." + (130 + workerId);
             int currentPort = 6000 + workerId;
-            hostTable.removeIf(s -> s.getPort() == currentPort);
+            hostInfoTable.removeIf(s -> s.getPort() == currentPort);
             Random random = new Random();
-            int index = random.nextInt(hostTable.size());
-            Host nextHop = hostTable.get(index);
+            int index = random.nextInt(hostInfoTable.size());
+            HostInfo nextHop = hostInfoTable.get(index);
             PublicKey publicKey = nextHop.getPublicKey();
             Vote vote = new Vote();
             String voteString = Integer.toString(workerId);
@@ -68,7 +68,7 @@ public class ClientService extends Thread {
             try {
                 String k = AES.generateKey();
                 String ciperVoteJsonString = AES.encrypt(voteJsonString, k);
-                String ciperKey1 = RSA.encrypt(k, serverHost.getPublicKey());
+                String ciperKey1 = RSA.encrypt(k, voteServerHostInfo.getPublicKey());
                 Data1 ds1 = new Data1();
                 Sender sender = new Sender();
                 sender.setHost(currentHost);

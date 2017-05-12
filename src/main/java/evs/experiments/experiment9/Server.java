@@ -1,7 +1,7 @@
 package evs.experiments.experiment9;
 
-import evs.model.Host;
-import evs.model.HostTable;
+import evs.model.HostInfo;
+import evs.model.HostInfoTable;
 import evs.model.PrivateKeyTable;
 import evs.model.ServerService;
 import evs.util.RSA;
@@ -16,16 +16,16 @@ import java.util.List;
 public class Server {
     public static void main(String[] args) throws Exception {
         int numberServers = 90;
-        Host serverHost = new Host("192.168.0.221", 8080, RSA.getPublicKey("publickey91.dat"));
+        HostInfo voteServerHostInfo = new HostInfo("192.168.0.221", 8080, RSA.getPublicKey("publickey91.dat"));
         List<PrivateKey> privateKeyList = new PrivateKeyTable().getPrivateKeyTable();
         List<PrivateKey> privateKeyTable = new ArrayList<>();
-        List<Host> hostList = new HostTable().getHostTable();
+        List<HostInfo> hostInfoList = new HostInfoTable().getHostInfoTable();
         for (int i = 0; i < numberServers; i++)
             privateKeyTable.add(i, privateKeyList.get(i));
-        List<Host> hostTable = new ArrayList<>(numberServers);
+        List<HostInfo> hostInfoTable = new ArrayList<>(numberServers);
         for (int i = 0; i < numberServers; i++)
-            hostTable.add(i, hostList.get(i));
-        ServerService serverService = new ServerService(numberServers, serverHost, privateKeyTable, hostTable);
+            hostInfoTable.add(i, hostInfoList.get(i));
+        ServerService serverService = new ServerService(numberServers, voteServerHostInfo, privateKeyTable, hostInfoTable);
         serverService.start();
         try {
             serverService.join();

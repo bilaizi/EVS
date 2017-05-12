@@ -21,12 +21,12 @@ import static com.alibaba.fastjson.JSON.toJSONString;
  */
 
 public class Client2 {
-    public static Host serverHost;
+    public static HostInfo serverHostInfo;
     private static PrivateKey privateKey;
 
     static {
         try {
-            serverHost = new Host("192.168.0.141", 8080, RSA.getPublicKey("publickey11.dat"));
+            serverHostInfo = new HostInfo("192.168.0.141", 8080, RSA.getPublicKey("publickey11.dat"));
             privateKey = RSA.getPrivateKey("privatekey2.dat");
         } catch (Exception e) {
             e.printStackTrace();
@@ -39,11 +39,11 @@ public class Client2 {
 
     public static void main(String[] args) throws Exception {
         long startTime = System.currentTimeMillis();
-        List<Host> hostTables = new HostTables().getHostTables();
-        hostTables.removeIf(s -> s.getPort() == 6002);
+        List<HostInfo> hostInfoTables = new HostTables().getHostInfoTables();
+        hostInfoTables.removeIf(s -> s.getPort() == 6002);
         Random random = new Random();
-        int index = random.nextInt(hostTables.size());
-        Host nextHop = hostTables.get(index);
+        int index = random.nextInt(hostInfoTables.size());
+        HostInfo nextHop = hostInfoTables.get(index);
         PublicKey publicKey = nextHop.getPublicKey();
         Vote vote = new Vote();
         String voteString = "00000002";
@@ -53,7 +53,7 @@ public class Client2 {
         String secretKey1 = AES.generateKey();
         System.out.println(secretKey1);
         String ciperVoteJsonString = AES.encrypt(voteJsonString, secretKey1);
-        String ciperKey1 = RSA.encrypt(secretKey1, serverHost.getPublicKey());
+        String ciperKey1 = RSA.encrypt(secretKey1, serverHostInfo.getPublicKey());
         Data1 ds1 = new Data1();
         Sender sender = new Sender();
         sender.setHost("192.168.0.132");

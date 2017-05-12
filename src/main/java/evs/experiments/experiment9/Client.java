@@ -1,8 +1,8 @@
 package evs.experiments.experiment9;
 
 import evs.model.ClientService;
-import evs.model.Host;
-import evs.model.HostTable;
+import evs.model.HostInfo;
+import evs.model.HostInfoTable;
 import evs.util.RSA;
 
 import java.util.ArrayList;
@@ -14,13 +14,13 @@ import java.util.List;
 
 public class Client {
     public static void main(String[] args) throws Exception {
-        Host serverHost = new Host("192.168.0.221", 8080, RSA.getPublicKey("publickey91.dat"));
+        HostInfo voteServerHostInfo = new HostInfo("192.168.0.221", 8080, RSA.getPublicKey("publickey91.dat"));
         int numberClients= 90;
-        List<Host> hostList=new HostTable().getHostTable();
-        List<Host> hostTable=new ArrayList<>(numberClients);
+        List<HostInfo> hostInfoList =new HostInfoTable().getHostInfoTable();
+        List<HostInfo> hostInfoTable =new ArrayList<>(numberClients);
         for(int i=0;i<numberClients;i++)
-            hostTable.add(i,hostList.get(i));
-        ClientService clientService = new ClientService(serverHost, hostTable, numberClients);
+            hostInfoTable.add(i, hostInfoList.get(i));
+        ClientService clientService = new ClientService(voteServerHostInfo, hostInfoTable, numberClients);
         clientService.start();
         try {
             clientService.join();

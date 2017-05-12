@@ -24,13 +24,18 @@ import static com.alibaba.fastjson.JSON.toJSONString;
  */
 public class VoteServerService extends Thread {
     private final PrivateKey privateKey;
-    private final List<Host> hostTable;
+    private final List<HostInfo> hostInfoTable;
     private final ServerSocket serverSocket;
     private final ExecutorService pool;
 
-    public VoteServerService(PrivateKey privateKey, List<Host> hostTable, int port, int backlog, String voteServerHost) throws IOException {
+    public VoteServerService(
+            PrivateKey privateKey,
+            List<HostInfo> hostInfoTable,
+            int port, int backlog,
+            String voteServerHost
+    ) throws IOException {
         this.privateKey = privateKey;
-        this.hostTable = hostTable;
+        this.hostInfoTable = hostInfoTable;
         this.serverSocket = new ServerSocket(port, backlog, InetAddress.getByName(voteServerHost));
         this.pool = Executors.newCachedThreadPool();
     }
@@ -58,30 +63,29 @@ public class VoteServerService extends Thread {
         public void run() {
             try {
                 DataInputStream dis = new DataInputStream(socket.getInputStream());
+                DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
                 String dsJsonString = dis.readUTF();
-                dis.close();
                 Data ds = parseObject(dsJsonString, Data.class);
                 String ciperJsonString = ds.getCiperData();
-                String ciperKey1 = ds.getCiperKey();
-                String k1 = RSA.decrypt(ciperKey1, privateKey);
+                String ciperKey = ds.getCiperKey();
+                String k1 = RSA.decrypt(ciperKey, privateKey);
                 String jsonString = AES.decrypt(ciperJsonString, k1);
                 Data1 ds1 = parseObject(jsonString, Data1.class);
                 Sender sender = ds1.getSender();
                 String serialNumber = ds1.getSerialNumber();
                 String ciperVote = ds1.getCiperVote();
-                String ciperKey2 = ds1.getCiperKey();
-                String k = RSA.decrypt(ciperKey2, privateKey);
+                ciperKey = ds1.getCiperKey();
+                String k = RSA.decrypt(ciperKey, privateKey);
                 String voteJsonString = AES.decrypt(ciperVote, k);
                 System.out.println("voteJsonString :" + voteJsonString);
-
-                Host host = hostTable
+                HostInfo hostInfo = hostInfoTable
                         .stream()
                         .filter(
                                 s -> Objects.equals(s.getHost(), sender.getHost())
                         )
                         .findFirst()
                         .orElse(null);
-                PublicKey lastHopPublicKey = host.getPublicKey();
+                PublicKey publicKey = hostInfo.getPublicKey();
                 String response = "You's vote have received:" + voteJsonString;
                 String ciperResponse = AES.encrypt(response, k);
                 Data2 ds2 = new Data2();
@@ -90,16 +94,14 @@ public class VoteServerService extends Thread {
                 jsonString = toJSONString(ds2);
                 k1 = AES.generateKey();
                 ciperJsonString = AES.encrypt(jsonString, k1);
-                ciperKey2 = RSA.encrypt(k1, lastHopPublicKey);
+                ciperKey = RSA.encrypt(k1, publicKey);
                 ds.setCiperData(ciperJsonString);
-                ds.setCiperKey(ciperKey2);
+                ds.setCiperKey(ciperKey);
                 ds.setFlag(false);
                 dsJsonString = toJSONString(ds);
-                socket = new Socket(host.getHost(), host.getPort());
-                DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
                 dos.writeUTF(dsJsonString);
                 dos.close();
-                socket.close();
+                dis.close();
             } catch (Exception e) {
                 System.out.println("服务器 run 异常: " + e.getMessage());
             } finally {
