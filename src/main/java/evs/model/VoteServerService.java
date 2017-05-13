@@ -66,19 +66,19 @@ public class VoteServerService extends Thread {
                 DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
                 String dsJsonString = dis.readUTF();
                 Data ds = parseObject(dsJsonString, Data.class);
-                String ciperJsonString = ds.getCiperData();
+                String ciperData = ds.getCiperData();
                 String ciperKey = ds.getCiperKey();
                 String k1 = RSA.decrypt(ciperKey, privateKey);
-                String jsonString = AES.decrypt(ciperJsonString, k1);
+                String jsonString = AES.decrypt(ciperData, k1);
                 Data1 ds1 = parseObject(jsonString, Data1.class);
                 Sender sender = ds1.getSender();
                 String serialNumber = ds1.getSerialNumber();
-                ciperJsonString = ds1.getCiperData();
+                ciperData = ds1.getCiperData();
                 ciperKey = ds1.getCiperKey();
                 String k = RSA.decrypt(ciperKey, privateKey);
-                String ciperData = AES.decrypt(ciperJsonString, k);
-                Vote vote = parseObject(ciperData, Vote.class);
-                String voteString= vote.getVoteString();
+                jsonString = AES.decrypt(ciperData, k);
+                Vote vote = parseObject(jsonString, Vote.class);
+                String voteString = vote.getVoteString();
                 System.out.println("voteString :" + voteString);
                 HostInfo hostInfo = hostInfoTable
                         .stream()
@@ -95,9 +95,9 @@ public class VoteServerService extends Thread {
                 ds2.setCiperData(ciperData);
                 jsonString = toJSONString(ds2);
                 k1 = AES.generateKey();
-                ciperJsonString = AES.encrypt(jsonString, k1);
+                ciperData = AES.encrypt(jsonString, k1);
                 ciperKey = RSA.encrypt(k1, publicKey);
-                ds.setCiperData(ciperJsonString);
+                ds.setCiperData(ciperData);
                 ds.setCiperKey(ciperKey);
                 ds.setFlag(false);
                 dsJsonString = toJSONString(ds);
