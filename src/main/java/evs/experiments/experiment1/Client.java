@@ -11,7 +11,6 @@ import java.util.List;
 /**
  * Created by bilaizi on 17-3-8.
  */
-
 public class Client {
     public static void main(String[] args) throws Exception {
         HostInfo voteServerHostInfo = new HostInfo("192.168.0.141", 8080, RSA.getPublicKey("publickey11.dat"));
@@ -20,7 +19,7 @@ public class Client {
         List<HostInfo> hostInfoTable =new ArrayList<>(numberClients);
         for(int i=0;i<numberClients;i++)
             hostInfoTable.add(i, hostInfoList.get(i));
-        ClientService clientService = new ClientService(voteServerHostInfo, hostInfoTable, 1);
+        ClientService clientService = new ClientService(voteServerHostInfo, hostInfoTable, 10);
         clientService.start();
         try {
             clientService.join();

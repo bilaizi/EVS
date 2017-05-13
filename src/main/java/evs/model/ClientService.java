@@ -62,9 +62,9 @@ public class ClientService extends Thread {
             PublicKey publicKey = nextHop.getPublicKey();
             Vote vote = new Vote();
             String voteString = "选票 " + Integer.toString(workerId);
+            System.out.println(voteString);
             vote.setVoteString(voteString);
             String jsonString = toJSONString(vote);
-            System.out.println(jsonString);
             try {
                 String k = AES.generateKey();
                 String ciperData = AES.encrypt(jsonString, k);

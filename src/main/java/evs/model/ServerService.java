@@ -148,9 +148,13 @@ public class ServerService extends Thread {
                             Data1 ds1 = parseObject(jsonString, Data1.class);
                             Sender sender = ds1.getSender();
                             String serialNumber = ds1.getSerialNumber();
+
+                            System.out.println(sender.getHost());
+
                             if (Math.random() > 0.5) {
                                 Sender sender1 = new Sender();
                                 sender1.setHost(serverHost);
+                                System.out.println(sender1.getHost());
                                 ds1.setSender(sender1);
                                 jsonString = toJSONString(ds1);
                                 k1 = AES.generateKey();
@@ -192,7 +196,6 @@ public class ServerService extends Thread {
                                 ds.setCiperData(ciperData);
                                 ds.setCiperKey(ciperKey);
                                 jsonString = toJSONString(ds);
-                                System.out.println(jsonString);
                                 nextHopSoket = new Socket(host, port);
                                 nextHopDOS = new DataOutputStream(nextHopSoket.getOutputStream());
                                 nextHopDOS.writeUTF(jsonString);
