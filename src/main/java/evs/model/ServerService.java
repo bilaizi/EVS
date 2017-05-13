@@ -136,14 +136,14 @@ public class ServerService extends Thread {
                         dis.close();
                     } else {
                         DataInputStream lastHopDIS = new DataInputStream(socket.getInputStream());
-                        String dsJsonString = lastHopDIS.readUTF();
+                        String jsonString = lastHopDIS.readUTF();
                         lastHopDIS.close();
-                        Data ds = parseObject(dsJsonString, Data.class);
-                        String ciperJsonString = ds.getCiperData();
+                        Data ds = parseObject(jsonString, Data.class);
+                        String ciperData = ds.getCiperData();
                         String ciperKey = ds.getCiperKey();
                         Boolean flag = ds.getFlag();
                         String k1 = RSA.decrypt(ciperKey, privateKey);
-                        String jsonString = AES.decrypt(ciperJsonString, k1);
+                        jsonString = AES.decrypt(ciperData, k1);
                         if (flag) {
                             Data1 ds1 = parseObject(jsonString, Data1.class);
                             Sender sender = ds1.getSender();
@@ -154,28 +154,28 @@ public class ServerService extends Thread {
                                 ds1.setSender(sender1);
                                 jsonString = toJSONString(ds1);
                                 k1 = AES.generateKey();
-                                ciperJsonString = AES.encrypt(jsonString, k1);
-                                ds.setCiperData(ciperJsonString);
+                                ciperData = AES.encrypt(jsonString, k1);
+                                ds.setCiperData(ciperData);
                                 HostInfo hostInfo = voteServerHostInfo;
                                 String host = hostInfo.getHost();
                                 int port = hostInfo.getPort();
                                 PublicKey publicKey = hostInfo.getPublicKey();
-                                String ciperKey2 = RSA.encrypt(k1, publicKey);
-                                ds.setCiperKey(ciperKey2);
-                                dsJsonString = toJSONString(ds);
+                                ciperKey = RSA.encrypt(k1, publicKey);
+                                ds.setCiperKey(ciperKey);
+                                jsonString = toJSONString(ds);
                                 Socket nextHopSoket = new Socket(host, port);
                                 DataOutputStream nextHopDOS = new DataOutputStream(nextHopSoket.getOutputStream());
                                 DataInputStream nextHopDIS = new DataInputStream(nextHopSoket.getInputStream());
-                                nextHopDOS.writeUTF(dsJsonString);
-                                dsJsonString = nextHopDIS.readUTF();
+                                nextHopDOS.writeUTF(jsonString);
+                                jsonString = nextHopDIS.readUTF();
                                 nextHopDIS.close();
                                 nextHopDOS.close();
                                 nextHopSoket.close();
-                                ds = parseObject(dsJsonString, Data.class);
-                                ciperJsonString = ds.getCiperData();
+                                ds = parseObject(jsonString, Data.class);
+                                ciperData = ds.getCiperData();
                                 ciperKey = ds.getCiperKey();
                                 k1 = RSA.decrypt(ciperKey, privateKey);
-                                jsonString = AES.decrypt(ciperJsonString, k1);
+                                jsonString = AES.decrypt(ciperData, k1);
                                 hostInfo = hostInfoTable
                                         .stream()
                                         .filter(
@@ -183,19 +183,19 @@ public class ServerService extends Thread {
                                         )
                                         .findFirst()
                                         .orElse(null);
+                                publicKey = hostInfo.getPublicKey();
                                 host = hostInfo.getHost();
                                 port = hostInfo.getPort();
-                                publicKey = hostInfo.getPublicKey();
                                 k1 = AES.generateKey();
-                                ciperJsonString = AES.encrypt(jsonString, k1);
-                                ciperKey2 = RSA.encrypt(k1, publicKey);
-                                ds.setCiperData(ciperJsonString);
-                                ds.setCiperKey(ciperKey2);
-                                dsJsonString = toJSONString(ds);
-                                System.out.println(dsJsonString);
+                                ciperData = AES.encrypt(jsonString, k1);
+                                ciperKey = RSA.encrypt(k1, publicKey);
+                                ds.setCiperData(ciperData);
+                                ds.setCiperKey(ciperKey);
+                                jsonString = toJSONString(ds);
+                                System.out.println(jsonString);
                                 nextHopSoket = new Socket(host, port);
                                 nextHopDOS = new DataOutputStream(nextHopSoket.getOutputStream());
-                                nextHopDOS.writeUTF(dsJsonString);
+                                nextHopDOS.writeUTF(jsonString);
                                 nextHopDOS.close();
                             } else {
                                 Stack<Sender> senderStack;
@@ -214,8 +214,8 @@ public class ServerService extends Thread {
                                 ds1.setSender(sender1);
                                 jsonString = toJSONString(ds1);
                                 k1 = AES.generateKey();
-                                ciperJsonString = AES.encrypt(jsonString, k1);
-                                ds.setCiperData(ciperJsonString);
+                                ciperData = AES.encrypt(jsonString, k1);
+                                ds.setCiperData(ciperData);
                                 hostInfoTable.removeIf(s -> Objects.equals(s.getHost(), lastHopHost));
                                 hostInfoTable.removeIf(s -> Objects.equals(s.getHost(), serverHost));
                                 Random random = new Random();
@@ -226,10 +226,10 @@ public class ServerService extends Thread {
                                 PublicKey publicKey = nextHop.getPublicKey();
                                 ciperKey = RSA.encrypt(k1, publicKey);
                                 ds.setCiperKey(ciperKey);
-                                dsJsonString = toJSONString(ds);
+                                jsonString = toJSONString(ds);
                                 Socket nextHopSoket = new Socket(host, port);
                                 DataOutputStream nextHopDOS = new DataOutputStream(nextHopSoket.getOutputStream());
-                                nextHopDOS.writeUTF(dsJsonString);
+                                nextHopDOS.writeUTF(jsonString);
                                 nextHopDOS.close();
                                 nextHopSoket.close();
                             }
@@ -237,9 +237,9 @@ public class ServerService extends Thread {
                             Data2 ds2 = parseObject(jsonString, Data2.class);
                             String serialNumber = ds2.getSerialNumber();
                             Stack<Sender> senderStack = routeMap.get(serialNumber);
-                            String response = ds2.getCiperData();
+                            ciperData = ds2.getCiperData();
                             if (senderStack == null) {
-                                responseMap.put(serialNumber, response);
+                                responseMap.put(serialNumber, ciperData);
                             } else {
                                 Sender sender = senderStack.pop();
                                 if (!senderStack.empty()) {
@@ -255,14 +255,14 @@ public class ServerService extends Thread {
                                 int port = nextHop.getPort();
                                 PublicKey publicKey = nextHop.getPublicKey();
                                 k1 = AES.generateKey();
-                                ciperJsonString = AES.encrypt(jsonString, k1);
+                                ciperData = AES.encrypt(jsonString, k1);
                                 ciperKey = RSA.encrypt(k1, publicKey);
-                                ds.setCiperData(ciperJsonString);
+                                ds.setCiperData(ciperData);
                                 ds.setCiperKey(ciperKey);
-                                dsJsonString = toJSONString(ds);
+                                jsonString = toJSONString(ds);
                                 Socket nextHopSoket = new Socket(host, port);
                                 DataOutputStream nextHopDOS = new DataOutputStream(nextHopSoket.getOutputStream());
-                                nextHopDOS.writeUTF(dsJsonString);
+                                nextHopDOS.writeUTF(jsonString);
                                 nextHopDOS.close();
                                 nextHopSoket.close();
                             }
