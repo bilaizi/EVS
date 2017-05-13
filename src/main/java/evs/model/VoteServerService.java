@@ -64,12 +64,12 @@ public class VoteServerService extends Thread {
             try {
                 DataInputStream dis = new DataInputStream(socket.getInputStream());
                 DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-                String dsJsonString = dis.readUTF();
-                Data ds = parseObject(dsJsonString, Data.class);
+                String jsonString = dis.readUTF();
+                Data ds = parseObject(jsonString, Data.class);
                 String ciperData = ds.getCiperData();
                 String ciperKey = ds.getCiperKey();
                 String k1 = RSA.decrypt(ciperKey, privateKey);
-                String jsonString = AES.decrypt(ciperData, k1);
+                jsonString = AES.decrypt(ciperData, k1);
                 Data1 ds1 = parseObject(jsonString, Data1.class);
                 Sender sender = ds1.getSender();
                 String serialNumber = ds1.getSerialNumber();
@@ -100,8 +100,8 @@ public class VoteServerService extends Thread {
                 ds.setCiperData(ciperData);
                 ds.setCiperKey(ciperKey);
                 ds.setFlag(false);
-                dsJsonString = toJSONString(ds);
-                dos.writeUTF(dsJsonString);
+                jsonString = toJSONString(ds);
+                dos.writeUTF(jsonString);
                 dos.close();
                 dis.close();
             } catch (Exception e) {

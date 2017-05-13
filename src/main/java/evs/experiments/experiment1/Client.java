@@ -20,7 +20,7 @@ public class Client {
         List<HostInfo> hostInfoTable =new ArrayList<>(numberClients);
         for(int i=0;i<numberClients;i++)
             hostInfoTable.add(i, hostInfoList.get(i));
-        ClientService clientService = new ClientService(voteServerHostInfo, hostInfoTable, numberClients);
+        ClientService clientService = new ClientService(voteServerHostInfo, hostInfoTable, 1);
         clientService.start();
         try {
             clientService.join();
