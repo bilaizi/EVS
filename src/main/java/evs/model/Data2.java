@@ -5,7 +5,7 @@ package evs.model;
  */
 public class Data2 {
     private String serialNumber;
-    private String ciperResponse;
+    private String ciperData;
 
     public void setSerialNumber(String serialNumber) {
         this.serialNumber = serialNumber;
@@ -15,16 +15,16 @@ public class Data2 {
         return serialNumber;
     }
 
-    public void setCiperResponse(String ciperResponse) {
-        this.ciperResponse = ciperResponse;
+    public void setCiperData(String ciperData) {
+        this.ciperData = ciperData;
     }
 
-    public String getCiperResponse() {
-        return ciperResponse;
+    public String getCiperData() {
+        return ciperData;
     }
 
     @Override
     public String toString() {
-        return "Data2{" + "serialNumber='" + serialNumber + ", ciperResponse='" + ciperResponse + '\'' + '}';
+        return "Data2{" + "serialNumber='" + serialNumber + ", ciperData='" + ciperData + '\'' + '}';
     }
 }

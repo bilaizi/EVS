@@ -83,7 +83,7 @@ public class ServiceServer {
                 Sender sender = ds1.getSender();
                 System.out.println(sender);
                 String serialNumber = ds1.getSerialNumber();
-                String ciperVote = ds1.getCiperVote();
+                String ciperVote = ds1.getCiperData();
                 String ciperKey2 = ds1.getCiperKey();
                 String secretKey2 = RSA.decrypt(ciperKey2, getPrivateKey());
                 System.out.println(secretKey1);
@@ -103,7 +103,7 @@ public class ServiceServer {
                 String ciperResponse = AES.encrypt(response, secretKey2);
                 Data2 ds2 = new Data2();
                 ds2.setSerialNumber(serialNumber);
-                ds2.setCiperResponse(ciperResponse);
+                ds2.setCiperData(ciperResponse);
                 jsonString = toJSONString(ds2);
 
                 secretKey2 = AES.generateKey();

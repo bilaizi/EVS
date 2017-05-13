@@ -237,7 +237,7 @@ public class ServerService extends Thread {
                             Data2 ds2 = parseObject(jsonString, Data2.class);
                             String serialNumber = ds2.getSerialNumber();
                             Stack<Sender> senderStack = routeMap.get(serialNumber);
-                            String response = ds2.getCiperResponse();
+                            String response = ds2.getCiperData();
                             if (senderStack == null) {
                                 responseMap.put(serialNumber, response);
                             } else {

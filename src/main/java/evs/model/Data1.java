@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class Data1 implements Serializable {
     private Sender sender;
     private String serialNumber;
-    private String ciperVote;
+    private String ciperData;
     private String ciperKey;
 
     public void setSender(Sender sender) {
@@ -27,12 +27,12 @@ public class Data1 implements Serializable {
         return serialNumber;
     }
 
-    public void setCiperVote(String ciperVote) {
-        this.ciperVote = ciperVote;
+    public void setCiperData(String ciperData) {
+        this.ciperData = ciperData;
     }
 
-    public String getCiperVote() {
-        return ciperVote;
+    public String getCiperData() {
+        return ciperData;
     }
 
     public void setCiperKey(String ciperKey) {
@@ -46,6 +46,6 @@ public class Data1 implements Serializable {
     @Override
     public String toString() {
         return "Data1{" + "sender=" + sender + ", serialNumber='" + serialNumber +
-                ", ciperVote='" + ciperVote + ", ciperKey='" + ciperKey + '\'' + '}';
+                ", ciperData='" + ciperData + ", ciperKey='" + ciperKey + '\'' + '}';
     }
 }

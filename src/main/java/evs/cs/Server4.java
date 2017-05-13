@@ -155,7 +155,7 @@ public class Server4 {
                         serialNumber = ds2.getSerialNumber();
                         System.out.println(serialNumber);
                         senderStack = routeMap.get(serialNumber);
-                        String response = ds2.getCiperResponse();
+                        String response = ds2.getCiperData();
                         if (senderStack == null) {
                             responseMap.put(serialNumber, response);
                         } else {

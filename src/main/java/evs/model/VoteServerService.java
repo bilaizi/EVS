@@ -73,11 +73,13 @@ public class VoteServerService extends Thread {
                 Data1 ds1 = parseObject(jsonString, Data1.class);
                 Sender sender = ds1.getSender();
                 String serialNumber = ds1.getSerialNumber();
-                String ciperVote = ds1.getCiperVote();
+                ciperJsonString = ds1.getCiperData();
                 ciperKey = ds1.getCiperKey();
                 String k = RSA.decrypt(ciperKey, privateKey);
-                String voteJsonString = AES.decrypt(ciperVote, k);
-                System.out.println("voteJsonString :" + voteJsonString);
+                String ciperData = AES.decrypt(ciperJsonString, k);
+                Vote vote = parseObject(ciperData, Vote.class);
+                String voteString= vote.getVoteString();
+                System.out.println("voteString :" + voteString);
                 HostInfo hostInfo = hostInfoTable
                         .stream()
                         .filter(
@@ -86,11 +88,11 @@ public class VoteServerService extends Thread {
                         .findFirst()
                         .orElse(null);
                 PublicKey publicKey = hostInfo.getPublicKey();
-                String response = "You's vote have received:" + voteJsonString;
-                String ciperResponse = AES.encrypt(response, k);
+                String response = "I have received you's vote :" + voteString;
+                ciperData = AES.encrypt(response, k);
                 Data2 ds2 = new Data2();
                 ds2.setSerialNumber(serialNumber);
-                ds2.setCiperResponse(ciperResponse);
+                ds2.setCiperData(ciperData);
                 jsonString = toJSONString(ds2);
                 k1 = AES.generateKey();
                 ciperJsonString = AES.encrypt(jsonString, k1);

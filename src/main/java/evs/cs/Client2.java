@@ -60,7 +60,7 @@ public class Client2 {
         String serialNumber = "2";
         ds1.setSender(sender);
         ds1.setSerialNumber(serialNumber);
-        ds1.setCiperVote(ciperVoteJsonString);
+        ds1.setCiperData(ciperVoteJsonString);
         ds1.setCiperKey(ciperKey1);
         String ds1JsonString = toJSONString(ds1);
         System.out.println(ds1JsonString);
